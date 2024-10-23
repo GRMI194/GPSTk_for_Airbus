@@ -157,6 +157,11 @@ namespace gpstk
          /// A Simple Constructor.
       Rinex3ObsHeader();
 
+      /*-- Define constructor and variable for SQM management --*/
+      bool _bIsPossiblySqm = false;
+      Rinex3ObsHeader(bool bIsPossiblySqm);
+      /*-- End of SQM management --*/
+
          /** Clear (empty out) header, setting all data members to
           * default values */
       void clear();
