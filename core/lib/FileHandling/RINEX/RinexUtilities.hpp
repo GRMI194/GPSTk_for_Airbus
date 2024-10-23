@@ -91,8 +91,9 @@ namespace gpstk
       /// Determine if the given file is a RINEX 3 observation file.
       /// Open the file, read the header, and test its validity.
       /// @param file the filename
+      /// @param If the file can be an SQM file
       /// @return true if the file is a valid Rinex observation file.
-   bool isRinex3ObsFile(const std::string& file);
+   bool isRinex3ObsFile(const std::string& file, bool bIsPossiblySqm = false);
 
       /** Sort a vector of RINEX obs file names on the time of the
        * first observation as found in the header. Return the sorted
