@@ -184,6 +184,8 @@ namespace gpstk
       RSSDP,        ///< IRNSS S-band B+C
       CW,           ///< Continuous Wave, i.e. no chipping sequence
       Undefined,    ///< Code is known to be undefined (as opposed to unknown)
+      Sqm_I,        ///<Added>: Tracking code for attribute I if not defined in OBS ICD
+      Sqm_Q,        ///<Added>: Tracking code for attribute Q if not defined in OBS ICD
       Last,         ///< Used to verify that all items are described at compile time
    }; // enum class TrackingCode
 

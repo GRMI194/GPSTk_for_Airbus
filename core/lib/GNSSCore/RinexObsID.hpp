@@ -60,10 +60,10 @@ namespace gpstk
        * tested with all RINEX If this string is 4 characters long,
        * the first character is the system character as described in
        * the Rinex 3 specification. */
-   bool isValidRinexObsID(const std::string& id);
+   bool isValidRinexObsID(const std::string& id, bool bIsPossiblySqm = false);
 
       /// Determine if the given ObsID is valid, for the given system
-   bool isValidRinexObsID(const std::string& id, const char syschar);
+   bool isValidRinexObsID(const std::string& id, const char syschar, bool bIsPossiblySqm = false);
 
       /** class RinexObsID is the set of ObsID's which are valid in
       * RINEX 3.03.  This class simply limits possible values of
@@ -128,9 +128,13 @@ namespace gpstk
           *   interpreting command-line options or other contexts
           *   where a RINEX version is not specified, use
           *   Rinex3ObsBase::currentVersion.
+          * * @param[in] bIsPossiblySqm
+          *   If we can read an SQM file
+          *   Rinex3ObsBase::currentVersion.
           * @throw InvalidParameter
           */
-      explicit RinexObsID(const std::string& strID, double version);
+      explicit RinexObsID(const std::string& strID, double version,
+                          bool bIsPossiblySqm = false);
 
          /** Construct this object from the C-style string specifier.
           * @param[in] strID The RINEX observation identifier to

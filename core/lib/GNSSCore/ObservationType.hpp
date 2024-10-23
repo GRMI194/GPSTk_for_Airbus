@@ -71,6 +71,18 @@ namespace gpstk
       PhsStdDev, ///< phase standard deviation, in cycles
       FreqIndx,  ///< GLONASS frequency offset index
       Undefined, ///< Observation type is known to be undefined (as opposed to unknown)
+      Sqm_E,     ///<Added>: E Observation Type for SQM
+      Sqm_F,     ///<Added>: F Observation Type for SQM
+      Sqm_G,     ///<Added>: G Observation Type for SQM
+      Sqm_H,     ///<Added>: H Observation Type for SQM
+      Sqm_I,     ///<Added>: I Observation Type for SQM
+      Sqm_J,     ///<Added>: J Observation Type for SQM
+      Sqm_K,     ///<Added>: K Observation Type for SQM
+      Sqm_M,     ///<Added>: M Observation Type for SQM
+      Sqm_N,     ///<Added>: N Observation Type for SQM
+      Sqm_O,     ///<Added>: O Observation Type for SQM
+      Sqm_P,     ///<Added>: P Observation Type for SQM
+      Sqm_Q,     ///<Added>: Q Observation Type for SQM
       Last,      ///< Used to verify that all items are described at compile time
    }; // enum class ObservationType
 
