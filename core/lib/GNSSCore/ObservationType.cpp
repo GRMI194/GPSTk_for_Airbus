@@ -70,6 +70,18 @@ namespace gpstk
             case ObservationType::PhsStdDev: return "PhsStdDev";
             case ObservationType::FreqIndx:  return "FreqIndx";
             case ObservationType::Undefined: return "Undefined";
+            case ObservationType::Sqm_E:     return "Sqm_E";
+            case ObservationType::Sqm_F:     return "Sqm_F";
+            case ObservationType::Sqm_G:     return "Sqm_G";
+            case ObservationType::Sqm_H:     return "Sqm_H";
+            case ObservationType::Sqm_I:     return "Sqm_I";
+            case ObservationType::Sqm_J:     return "Sqm_J";
+            case ObservationType::Sqm_K:     return "Sqm_K";
+            case ObservationType::Sqm_M:     return "Sqm_M";
+            case ObservationType::Sqm_N:     return "Sqm_N";
+            case ObservationType::Sqm_O:     return "Sqm_O";
+            case ObservationType::Sqm_P:     return "Sqm_P";
+            case ObservationType::Sqm_Q:     return "Sqm_Q";
             default:                         return "???";
          } // switch (e)
       } // asString(ObservationType)
@@ -111,6 +123,30 @@ namespace gpstk
             return ObservationType::FreqIndx;
          if (s == "Undefined")
             return ObservationType::Undefined;
+         if (s == "Sqm_E")
+             return ObservationType::Sqm_E;
+         if (s == "Sqm_F")
+             return ObservationType::Sqm_F;
+         if (s == "Sqm_G")
+             return ObservationType::Sqm_G;
+         if (s == "Sqm_H")
+             return ObservationType::Sqm_H;
+         if (s == "Sqm_I")
+             return ObservationType::Sqm_I;
+         if (s == "Sqm_J")
+             return ObservationType::Sqm_J;
+         if (s == "Sqm_K")
+             return ObservationType::Sqm_K;
+         if (s == "Sqm_M")
+             return ObservationType::Sqm_M;
+         if (s == "Sqm_N")
+             return ObservationType::Sqm_N;
+         if (s == "Sqm_O")
+             return ObservationType::Sqm_O;
+         if (s == "Sqm_P")
+             return ObservationType::Sqm_P;
+         if (s == "Sqm_Q")
+             return ObservationType::Sqm_Q;
          return ObservationType::Unknown;
       } // asObservationType(string)
    } // namespace StringUtils

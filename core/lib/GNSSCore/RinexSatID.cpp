@@ -71,6 +71,7 @@ namespace gpstk
          case SatelliteSystem::QZSS:    return 'J';
          case SatelliteSystem::BeiDou:  return 'C';
          case SatelliteSystem::IRNSS:   return 'I';
+         case SatelliteSystem::Mixed:   return 'M';
          default:                       return '?';
       }
    }
@@ -90,6 +91,7 @@ namespace gpstk
          case SatelliteSystem::QZSS:    return "QZSS";
          case SatelliteSystem::BeiDou:  return "BeiDou";
          case SatelliteSystem::IRNSS:   return "IRNSS";
+         case SatelliteSystem::Mixed:   return "Mixed";
          default:                       return "Unknown";
       }
    }
@@ -109,6 +111,7 @@ namespace gpstk
          case SatelliteSystem::QZSS:    return "QZS";
          case SatelliteSystem::BeiDou:  return "BDS";
          case SatelliteSystem::IRNSS:   return "IRN";      // RINEX ver 3.03
+         case SatelliteSystem::Mixed:   return "Mix";      // RINEX ver 3.03
          default:                       return "Unk";
       }
    }

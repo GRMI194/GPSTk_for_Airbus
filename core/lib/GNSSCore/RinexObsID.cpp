@@ -220,7 +220,7 @@ namespace gpstk
    // characters long, the system is assumed to be GPS. If this string is 4
    // characters long, the first character is the system designator as
    // described in the Rinex 3 specification.
-   bool isValidRinexObsID(const std::string& strID)
+   bool isValidRinexObsID(const std::string& strID, bool bIsPossiblySqm)
    {
       int i(static_cast<int>(strID.length())-3);
       if(i < 0 || i > 1)
@@ -235,14 +235,14 @@ namespace gpstk
       {
          sys = strID[0];
          id = strID.substr(1);
-         return isValidRinexObsID(id,sys);
+         return isValidRinexObsID(id,sys, bIsPossiblySqm);
       }
 
       // test all RINEX systems
       std::string syss(RinexObsID::validRinexSystems);
       for(size_t j=0; j<syss.size(); j++)
       {
-         if(isValidRinexObsID(strID,syss[j]))
+         if(isValidRinexObsID(strID,syss[j], bIsPossiblySqm))
          {
             return true;
          }
@@ -252,7 +252,7 @@ namespace gpstk
    }
 
    // Determine if the given ObsID is valid, for the given system
-   bool isValidRinexObsID(const std::string& strID, const char sys)
+   bool isValidRinexObsID(const std::string& strID, const char sys, bool bIsPossiblySqm)
    {
       if(strID.length() != 3)
       {
@@ -275,7 +275,7 @@ namespace gpstk
          return false;
       }
          // special cases for iono and channel num
-      if (ot == 'I' && ((tc != ' ') || (cb < '1') || (cb > '9')))
+      if ((ot == 'I') && (bIsPossiblySqm == false) && ((tc != ' ') || (cb < '1') || (cb > '9')))
       {
          return false;
       }

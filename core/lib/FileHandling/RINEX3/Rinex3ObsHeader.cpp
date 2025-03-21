@@ -170,6 +170,17 @@ namespace gpstk
          : PisY(false)
    {
       clear();
+
+      // Set Sqm Variable
+      _bIsPossiblySqm = false;
+   }
+
+   Rinex3ObsHeader::Rinex3ObsHeader(bool bIsPossiblySqm)
+   {
+       clear();
+
+       // Set Sqm Variable
+       _bIsPossiblySqm = bIsPossiblySqm;
    }
 
 
@@ -943,7 +954,7 @@ namespace gpstk
             GLOCodPhsBias::const_iterator it;
             const string labs[4] = {"C1C", "C1P", "C2C", "C2P"};
             for (int i = 0; i < 4; i++) {
-               RinexObsID obsid(RinexObsID("R" + labs[i], version));
+               RinexObsID obsid(RinexObsID("R" + labs[i], version, _bIsPossiblySqm));
                it = glonassCodPhsBias.find(obsid);
                double bias = 0.0;
                if (it != glonassCodPhsBias.end())
@@ -1233,7 +1244,7 @@ namespace gpstk
             {
                string obstype(line.substr(4 * i + 7, 3));
                mapObsTypes[satSys].push_back(
-                  RinexObsID(satSys+obstype,version));
+                  RinexObsID(satSys+obstype,version, _bIsPossiblySqm));
             }
          }
          catch(InvalidParameter& ip)
@@ -2516,7 +2527,7 @@ namespace gpstk
       }
 
          // Check if resulting 'newType' is valid
-      if( !isValidRinexObsID(newType) )
+      if( !isValidRinexObsID(newType, _bIsPossiblySqm) )
       {
          InvalidRequest ir(newType + " is not a valid RinexObsID!.");
          GPSTK_THROW(ir);
@@ -2524,7 +2535,7 @@ namespace gpstk
 
          // Extract the GNSS from the newType
       string sys( newType, 0, 1 );
-      return getObsIndex(sys, RinexObsID(newType, version));
+      return getObsIndex(sys, RinexObsID(newType, version, _bIsPossiblySqm));
    }
 
    

@@ -63,6 +63,17 @@ namespace gpstk
       { 'X',  ObservationType::Channel },
       { 'I',  ObservationType::Iono },
       { '-',  ObservationType::Undefined },
+      { 'E',  ObservationType::Sqm_E },
+      { 'F',  ObservationType::Sqm_F },
+      { 'G',  ObservationType::Sqm_G },
+      { 'H',  ObservationType::Sqm_H },
+      { 'J',  ObservationType::Sqm_J },
+      { 'K',  ObservationType::Sqm_K },
+      { 'M',  ObservationType::Sqm_M },
+      { 'N',  ObservationType::Sqm_N },
+      { 'O',  ObservationType::Sqm_O },
+      { 'P',  ObservationType::Sqm_P },
+      { 'Q',  ObservationType::Sqm_Q },
    }; // std::map<char, ObservationType> RinexObsID::char2ot
 
    std::map<char, CarrierBand> RinexObsID::char2cb {
@@ -112,6 +123,18 @@ namespace gpstk
       { ObservationType::Channel,    'X' },
       { ObservationType::Iono,       'I' },
       { ObservationType::Undefined,  '-' },
+      { ObservationType::Sqm_E,      'E' },
+      { ObservationType::Sqm_F,      'F' },
+      { ObservationType::Sqm_G,      'G' },
+      { ObservationType::Sqm_H,      'H' },
+      { ObservationType::Sqm_I,      'I' },
+      { ObservationType::Sqm_J,      'J' },
+      { ObservationType::Sqm_K,      'K' },
+      { ObservationType::Sqm_M,      'M' },
+      { ObservationType::Sqm_N,      'N' },
+      { ObservationType::Sqm_O,      'O' },
+      { ObservationType::Sqm_P,      'P' },
+      { ObservationType::Sqm_Q,      'Q' },
    }; // std::map<ObservationType, char> RinexObsID::ot2char
 
    std::map<CarrierBand, char> RinexObsID::cb2char {
@@ -227,6 +250,8 @@ namespace gpstk
       { TrackingCode::RSSP,          'C' },
       { TrackingCode::RSSDP,         'X' },
       { TrackingCode::Undefined,     '-' },
+      { TrackingCode::Sqm_I,         'I' },
+      { TrackingCode::Sqm_Q,         'Q' },
    }; // std::map<TrackingCode, char> RinexObsID::tc2char
 
    // map of valid RINEX tracking codes, systems and frequency
@@ -234,9 +259,9 @@ namespace gpstk
    RinexObsID::validRinexTrackingCodes {
       { 'G', {
                // 1N: Pseudorange (C) not valid
-            { '1', "PYWLMCSXN* " },
+            { '1', "PYWLMCSXNIQ* " },
                // 2N: Pseudorange (C) not valid
-            { '2', "PYWLMCSXDN* " },
+            { '2', "PYWLMCSXDNIQ* " },
             { '5', "IQX* " } } },
 
       { 'R', {
@@ -247,14 +272,14 @@ namespace gpstk
             { '6', "ABX* " } } },
 
       { 'E', {
-            { '1', "ABCXZ* " },
+            { '1', "ABCXZIQ* " },
             { '5', "IQX* " },
-            { '6', "ABCXZ* " },
+            { '6', "ABCXZIQ* " },
             { '7', "IQX* " },
             { '8', "IQX* " } } },
 
       { 'S', {
-            { '1', "C* " },
+            { '1', "CIQ* " },
             { '5', "IQX* " } } },
 
       { 'J', {
@@ -279,7 +304,8 @@ namespace gpstk
             { '9', "ABCX* " } } }
    }; // RinexObsID::validRinexTrackingCodes
 
-   RinexObsID::RinexObsID(const std::string& strID, double version)
+   RinexObsID::RinexObsID(const std::string& strID, double version,
+                          bool bIsPossiblySqm)
          : rinexVersion(version)
    {
       std::string modStrID(strID);
@@ -296,6 +322,10 @@ namespace gpstk
       {
          modStrID = std::string("G") + modStrID; // GPS is default
       }
+
+
+      // Initialize variable to check SQM format
+      bool bFormatOk = true;
 
          // make an initial guess
       const auto& tc = char2tc.find(modStrID[3]);
@@ -345,16 +375,144 @@ namespace gpstk
             break;
          case 'I': // Iono
             type = ObservationType::Iono;
-            if ((modStrID[2] < '1') || (modStrID[2] > '9') ||
-                (modStrID[3] != ' '))
+            if ((bIsPossiblySqm == false) && ((modStrID[2] < '1') || (modStrID[2] > '9') ||
+                                            (modStrID[3] != ' ')))
             {
                InvalidParameter e("Invalid ionospheric delay pseudo-obs ID " +
                                   strID);
                GPSTK_THROW(e);
             }
             code = TrackingCode::Undefined;
+
+            // If we are in SQM
+            if ((bIsPossiblySqm == true) && (modStrID[2] >= '1') && (modStrID[2] <= '9') &&
+                (modStrID[3] != ' '))
+            {
+                bFormatOk = false;
+                type = ObservationType::Sqm_I;
+                if (rincode.find("Q") != std::string::npos){ code = TrackingCode::Sqm_Q; bFormatOk = true;}
+                if (rincode.find("I") != std::string::npos){ code = TrackingCode::Sqm_I; bFormatOk = true;}
+            }
+            else
+            {
+                // If we are in obs, check the format
+                if ((modStrID[2] < '1') || (modStrID[2] > '9') || (modStrID[3] != ' '))
+                {
+                     bFormatOk = false;
+                }
+            }
+
+            // Check if the format is nok for OBS or SQM
+            if (bFormatOk == false)
+            {
+                InvalidParameter e("Invalid observable found " +
+                                   strID);
+                GPSTK_THROW(e);
+            }
+
             band = char2cb[modStrID[2]];
             break;
+         /*- SQM parameters */
+         case 'E': // Sqm_E
+            type = ObservationType::Sqm_E;
+            if (bIsPossiblySqm == false)
+            {
+                InvalidParameter e("Invalid Observation type " +
+                                   strID);
+                GPSTK_THROW(e);
+            }
+            break;
+         case 'F': // Sqm_F
+             type = ObservationType::Sqm_F;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+         case 'G': // Sqm_G
+             type = ObservationType::Sqm_G;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+         case 'H': // Sqm_H
+             type = ObservationType::Sqm_H;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+         case 'J': // Sqm_J
+             type = ObservationType::Sqm_J;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+         case 'K': // Sqm_K
+             type = ObservationType::Sqm_K;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+         case 'M': // Sqm_M
+             type = ObservationType::Sqm_M;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+         case 'N': // Sqm_N
+             type = ObservationType::Sqm_N;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+         case 'O': // Sqm_O
+             type = ObservationType::Sqm_O;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+         case 'P': // Sqm_P
+             type = ObservationType::Sqm_P;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+         case 'Q': // Sqm_Q
+             type = ObservationType::Sqm_Q;
+             if (bIsPossiblySqm == false)
+             {
+                 InvalidParameter e("Invalid Observation type " +
+                                    strID);
+                 GPSTK_THROW(e);
+             }
+             break;
+        /*-- End of SQM parameters -- */
          case '-': // Undefined
             type = ObservationType::Undefined;
             break;
@@ -601,6 +759,29 @@ namespace gpstk
                band = CarrierBand::E6;
                code = TrackingCode::E6ABC;
             }
+            else if (bIsPossiblySqm == true)
+            {
+                if (rincode.find("1") != std::string::npos){ band = CarrierBand::L1; }
+                else if (rincode.find("5") != std::string::npos){ band = CarrierBand::L5; }
+                else if (rincode.find("7") != std::string::npos){ band = CarrierBand::E5b; }
+                else if (rincode.find("8") != std::string::npos){ band = CarrierBand::E5ab; }
+                else if (rincode.find("6") != std::string::npos){ band = CarrierBand::E6; }
+                else
+                {
+                    InvalidParameter e("Invalid Observation band " +
+                                       strID);
+                    GPSTK_THROW(e);
+                }
+
+                if (rincode.find("Q") != std::string::npos){ code = TrackingCode::Sqm_Q; }
+                else if (rincode.find("I") != std::string::npos){ code = TrackingCode::Sqm_I; }
+                else
+                {
+                    InvalidParameter e("Invalid Observation code " +
+                                       strID);
+                    GPSTK_THROW(e);
+                }
+            }
             break;
          case 'R': // GLONASS
             if (rincode == "1C")
@@ -780,6 +961,27 @@ namespace gpstk
                band = CarrierBand::L5;
                code = TrackingCode::L5IQ;
             }
+            else if (bIsPossiblySqm == true)
+            {
+                if (rincode.find("1") != std::string::npos){ band = CarrierBand::L1; }
+                else if (rincode.find("2") != std::string::npos){ band = CarrierBand::L2; }
+                else if (rincode.find("5") != std::string::npos){ band = CarrierBand::L5; }
+                else
+                {
+                    InvalidParameter e("Invalid Observation band " +
+                                       strID);
+                    GPSTK_THROW(e);
+                }
+
+                if (rincode.find("Q") != std::string::npos){ code = TrackingCode::Sqm_Q; }
+                else if (rincode.find("I") != std::string::npos){ code = TrackingCode::Sqm_I; }
+                else
+                {
+                    InvalidParameter e("Invalid Observation code " +
+                                       strID);
+                    GPSTK_THROW(e);
+                }
+            }
             break;
          case 'I': // NavIC
             if (rincode == "5A")
@@ -945,6 +1147,26 @@ namespace gpstk
             {
                band = CarrierBand::L5;
                code = TrackingCode::L5IQ;
+            }
+            else if (bIsPossiblySqm == true)
+            {
+                if (rincode.find("1") != std::string::npos){ band = CarrierBand::L1; }
+                else if (rincode.find("5") != std::string::npos){ band = CarrierBand::L5; }
+                else
+                {
+                    InvalidParameter e("Invalid Observation band " +
+                                       strID);
+                    GPSTK_THROW(e);
+                }
+
+                if (rincode.find("Q") != std::string::npos){ code = TrackingCode::Sqm_Q; }
+                else if (rincode.find("I") != std::string::npos){ code = TrackingCode::Sqm_I; }
+                else
+                {
+                    InvalidParameter e("Invalid Observation code " +
+                                       strID);
+                    GPSTK_THROW(e);
+                }
             }
             break;
       } // switch (modStrID[0])

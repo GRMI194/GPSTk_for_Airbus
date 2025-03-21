@@ -368,7 +368,8 @@ testCodes(gpstk::TestUtil& testFramework,
           const std::string& bandCode,
           bool prValid)
 {
-   std::string invalidCodes("ABEFGHIJKMNOPQRTUVWXYZabcdefghijklmnopqrstuvwxyz"),
+   // The following codes are acceptable for SQM: "EFGHIJKMNOPQ"
+   std::string invalidCodes("ABRTUVWXYZabcdefghijklmnopqrstuvwxyz"),
       validCodes("LDS");
    if (prValid)
       validCodes += "C";

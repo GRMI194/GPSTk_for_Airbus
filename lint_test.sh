@@ -14,16 +14,16 @@ if [ ! -e $LINTER ]; then
 fi
 
 # Step 1 - Determine which two branches to compare.
-#          If on main, compare with previous, otherwise compare with origin/main.
+#          If on master, compare with previous, otherwise compare with origin/master.
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-if [ "$CURRENT_BRANCH" == "main" ]; then
-    echo "Comparing against prior commit on main branch."
+if [ "$CURRENT_BRANCH" == "master" ]; then
+    echo "Comparing against prior commit on master branch."
     COMPARE_COMMIT=$(git rev-parse HEAD~1)
 else
-    echo "Comparing against HEAD of main branch."
-    COMPARE_COMMIT=$(git rev-parse origin/main)
+    echo "Comparing against HEAD of master branch."
+    COMPARE_COMMIT=$(git rev-parse origin/master)
 fi
 
 # Step 2 - Get a list of all files that are different between those two commits.

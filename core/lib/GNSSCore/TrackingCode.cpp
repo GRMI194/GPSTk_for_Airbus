@@ -174,6 +174,8 @@ namespace gpstk
             case TrackingCode::RSSDP:        return "RSSDP";
             case TrackingCode::CW:           return "CW";
             case TrackingCode::Undefined:    return "Undefined";
+            case TrackingCode::Sqm_I:        return "Sqm_I";
+            case TrackingCode::Sqm_Q:        return "Sqm_Q";
             default:                         return "???";
          } // switch (e)
       } // asString(TrackingCode)
@@ -423,6 +425,10 @@ namespace gpstk
             return TrackingCode::CW;
          if (s == "Undefined")
             return TrackingCode::Undefined;
+         if (s == "Sqm_I")
+             return TrackingCode::Sqm_I;
+         if (s == "Sqm_Q")
+             return TrackingCode::Sqm_Q;
          return TrackingCode::Unknown;
       } // asTrackingCode(string)
    } // namespace StringUtils

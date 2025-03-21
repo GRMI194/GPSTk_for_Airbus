@@ -126,16 +126,16 @@ class MockIono: public gpstk::IonoModelStore {
                    const Position& rxgeo,
                    double svel,
                    double svaz,
-                   gpstk::CarrierBand band));
+                   gpstk::IonoModel::Frequency freq));
 
     virtual double getCorrection(
             const CommonTime& time,
             const Position& rxgeo,
             double svel,
             double svaz,
-            gpstk::CarrierBand band) const
+            gpstk::IonoModel::Frequency freq) const
     {
-        return getCorrection_wrap(time, rxgeo, svel, svaz, band);
+        return getCorrection_wrap(time, rxgeo, svel, svaz, freq);
     }
 };
 

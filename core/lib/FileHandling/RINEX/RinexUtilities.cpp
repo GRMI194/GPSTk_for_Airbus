@@ -308,11 +308,11 @@ bool isRinexObsFile(const string& file)
 }
 
 //------------------------------------------------------------------------------------
-bool isRinex3ObsFile(const string& file)
+bool isRinex3ObsFile(const string& file, bool bIsPossiblySqm)
 {
    try
    {
-      Rinex3ObsHeader header;
+      Rinex3ObsHeader header(bIsPossiblySqm);
       Rinex3ObsStream rostream;
       try {
          rostream.open(file.c_str(),ios::in);
